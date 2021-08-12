@@ -290,9 +290,12 @@ CODE
 
 Once this is performed, the data is ready to be used by feature generation. The same steps are followed as before.
 
+<h4>ESPnet2 recipes</h4>
+Now that our espnet codes are ready to train ASR models, how can we transition to ESPnet2? It involved minimal steps. Here are the main design differences,
 
+- Codes are present in ```egs2/```
+- ```run.sh``` is reduced to passing arguements, no stages present.
+- ```egs2/TEMPLATE/asr/``` contains the common code to be used by all recipies.
+- All steps involving data download and preparation from ```run.sh``` is now present in ```local/data.sh```.
 
-#different changes from egs to eg2
-#show reuse older codes for this
-
-#subtask2
+The same is the case for subtask2
