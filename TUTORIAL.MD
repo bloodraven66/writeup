@@ -59,6 +59,7 @@ You will also have it's corresponding transcripts. It can be present in a text f
  ```
 In the text file, the unique file names are present along with the text next to it. This is how data is present for mucs subtask1, I will walk through the data preparation steps involved with it.
 
+<h4>Subtask1 ESPnet recipe</h4>
 Subtask1 involves building a multilingual ASR system in six languages, namely, Hindi, Marathi, Odia, Telugu, Tamil, and Gujarati. 3 languages- Hindi, Marathi, Odia are available at a publicly accesible download link, so let us have a script to download it for us.
 
 The ```<root-data-folder>``` is defined by the ```path``` variable which can be passed as an arguement while running the script. We then store the full path to the directory in ```DIR```.
@@ -249,17 +250,26 @@ for lang in Tamil Telugu Gujarati; do
     fi
 done
 ```
-
+<h4>Kaldi style data preparation</h4>
 Now that the data is ready to be used, we are in the data preparation state where certain files are to be generated. The generated files are to be present as required in kaldi. All the steps are available <a href='https://kaldi-asr.org/doc/data_prep.html'>here</a>, at kaldi website. I will go through the specifics regarding subtask1 preparation.
 
 - We need a ```text``` file which contains utterance id along with the corresponding text. If speaker information is present, it is should be prefix of utterance id    
+CODE
+
 - Next, we have ```wav.scp``` file. For the sake of simpkicity, we will have utterence id along with path to corresponding ```.wav``` file.
+CODE
+
 - We need a mapping from utterance id to speaker id, this is present in ```utt2spk```.
 If no speaker information is present, speaker id can be same as utterence id.
+CODE
+
 - a ```segments``` file can be present which will contain begin and end time stamps for the audio.
+CODE
 
 Now, there are some files which will be generated automatically, there are as follows
 - ```spk2utt``` is created from ```utt2spk```.
+CODE
+
 - The mapping between utterence id and computed features are present in ```feats.scp```. This is created while executing ```run.sh```.
 
 To ensure that data is extrcated and mapped properly, following lines are present in ```run.sh```.
@@ -268,7 +278,9 @@ utils/validate_data_dir.sh data/train
 utils/fix_data_dir.sh data/train
 ...
 ```
+<h4>End-to-end integration for subtask1</h4>
 With this, data preparation is complete. How do the different files interact with each other?
+
 We store ```download_data.sh``` & ```prepare_data.sh``` in ```local/```.
 Then it is handled in initial stages in ```run.sh```. We first download the data with ```download_data.sh``` in stage -1.
 CODE
@@ -282,7 +294,7 @@ Experiment reuslts & logs are stored in `exp/` folder. Model configuration file 
 
 
 #show_results
-
+<h4>ESPnet recipe subtask2</h4>
 Those were the specifications for subtask1. What do we need to change for subtask2?
 
 We first download the data, only the link has to be changed. Subtask2 data is already avaiable in kaldi style. So we do not need to generate them. The only change necessary is to add the current .wav path to ```wav.scp```. This is performed by the following code.
@@ -298,4 +310,21 @@ Now that our espnet codes are ready to train ASR models, how can we transition t
 - ```egs2/TEMPLATE/asr/``` contains the common code to be used by all recipies.
 - All steps involving data download and preparation from ```run.sh``` is now present in ```local/data.sh```.
 
-The same is the case for subtask2
+<h4>ESPnet2 recipe subtask1</h4>
+Here, data.sh becomes,
+CODE
+
+And, ```run.sh``` is as follows
+
+In this case, once the features are computed, ```SKIP____``` flag can be turned to false to deiable recomputing in further runs. config files are present in a slightly different structure & certain parameters may need to be renamed
+
+Eg: ```grad-clip -> grad_clip```
+<h4>ESPnet2 recipe subtask2</h4>
+Here, data.sh becomes,
+CODE
+
+And, ```run.sh``` is as follows
+
+Additional info
+
+Somthing to conclude
