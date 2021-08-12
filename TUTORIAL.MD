@@ -250,17 +250,47 @@ for lang in Tamil Telugu Gujarati; do
 done
 ```
 
-#compute kaldi data
+Now that the data is ready to be used, we are in the data preparation state where certain files are to be generated. The generated files are to be present as required in kaldi. All the steps are available <a href='https://kaldi-asr.org/doc/data_prep.html'>here</a>, at kaldi website. I will go through the specifics regarding subtask1 preparation.
 
-#using it in ./run.sh
+- We need a ```text``` file which contains utterance id along with the corresponding text. If speaker information is present, it is should be prefix of utterance id    
+- Next, we have ```wav.scp``` file. For the sake of simpkicity, we will have utterence id along with path to corresponding ```.wav``` file.
+- We need a mapping from utterance id to speaker id, this is present in ```utt2spk```.
+If no speaker information is present, speaker id can be same as utterence id.
+- a ```segments``` file can be present which will contain begin and end time stamps for the audio.
 
-#using ./run.sh while fine tuning (what stages to skip, etc)
+Now, there are some files which will be generated automatically, there are as follows
+- ```spk2utt``` is created from ```utt2spk```.
+- The mapping between utterence id and computed features are present in ```feats.scp```. This is created while executing ```run.sh```.
+
+To ensure that data is extrcated and mapped properly, following lines are present in ```run.sh```.
+```
+utils/validate_data_dir.sh data/train
+utils/fix_data_dir.sh data/train
+...
+```
+With this, data preparation is complete. How do the different files interact with each other?
+We store ```download_data.sh``` & ```prepare_data.sh``` in ```local/```.
+Then it is handled in initial stages in ```run.sh```. We first download the data with ```download_data.sh``` in stage -1.
+CODE
+
+We will then prepare the kaldi data in stage 0.
+CODE
+
+After this, you can proceed with other stages starting with feature generation. We use fbank with pitch as audio features. After this is computed, it need not be visited again to change the model or fine tune results. So we can start from stage 2.
+
+Experiment reuslts & logs are stored in `exp/` folder. Model configuration file can be added in ```conf/```, new experiment directories will be created inside `exp/` with the config file name present.
+
 
 #show_results
 
-#subtask2
+Those were the specifications for subtask1. What do we need to change for subtask2?
 
-#what changes here and why?
+We first download the data, only the link has to be changed. Subtask2 data is already avaiable in kaldi style. So we do not need to generate them. The only change necessary is to add the current .wav path to ```wav.scp```. This is performed by the following code.
+CODE
+
+Once this is performed, the data is ready to be used by feature generation. The same steps are followed as before.
+
+
 
 #different changes from egs to eg2
 #show reuse older codes for this
