@@ -256,23 +256,44 @@ done
 Now that the data is ready to be used, we are in the data preparation state where certain files are to be generated. The generated files are to be present as required in kaldi. All the steps are available <a href='https://kaldi-asr.org/doc/data_prep.html'>here</a>, at kaldi website. I will go through the specifics regarding subtask1 preparation.
 
 - We need a ```text``` file which contains utterance id along with the corresponding text. If speaker information is present, it is should be prefix of utterance id    
-
+```
+GU_001960142 કેન્દ્ર સરકારના આર્થિક સચિવ શક્તિદાસ દ્વારા આ અંગે પત્રકારોને જાણકારી આપવામાં આવી હતી
+GU_001960144 રીમા અબ્બાસીએ આ પુસ્તક લખવા માટે બલુચિસ્તાન સિંધ અને પેશાવર જેવા વિસ્તારોમાં એક વર્ષ જેટલો સમય ગાળ્યો છે
+GU_001960145 પરંતુ રમેશભાઈનો સાચો પ્રેમ અને વફાદારીએ જ્યોત્સનાબેનનો સાથ ન છોડયો
+GU_001960146 છ દિવસ બાદ એક મિલિયન ચાઇનીઝ લશ્કરી દળો આવી પહોંચ્યા
+```
 
 - Next, we have ```wav.scp``` file. For the sake of simpkicity, we will have utterence id along with path to corresponding ```.wav``` file.
-
+```
+GU_001960142 raw_data/Gujarati/test/audio/001960142.wav
+GU_001960144 raw_data/Gujarati/test/audio/001960144.wav
+GU_001960145 raw_data/Gujarati/test/audio/001960145.wav
+GU_001960146 raw_data/Gujarati/test/audio/001960146.wav
+...
+```
 
 - We need a mapping from utterance id to speaker id, this is present in ```utt2spk```.
 If no speaker information is present, speaker id can be same as utterence id.
-
+```
+GU_001960142    GU_001960142
+GU_001960144    GU_001960144
+GU_001960145    GU_001960145
+GU_001960146    GU_001960146
+...
+```
 
 - a ```segments``` file can be present which will contain begin and end time stamps for the audio.
 CODE
 
 Now, there are some files which will be generated automatically, there are as follows
 - ```spk2utt``` is created from ```utt2spk```.
-
-
-- The mapping between utterence id and computed features are present in ```feats.scp```. This is created while executing ```run.sh```.
+```
+GU_001960142 GU_001960142
+GU_001960144 GU_001960144
+GU_001960145 GU_001960145
+GU_001960146 GU_001960146
+...
+```
 
 These files are now arranged in the following structure,
 ```
