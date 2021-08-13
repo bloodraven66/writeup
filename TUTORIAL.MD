@@ -8,6 +8,7 @@ To use ESPnet on a new dataset, a recipe can be built and incorporated with ESPn
 
 I will be going through steps involved in both the approaches for mucs challenge subtasks. To start with, ESPnet has to be installed with kaldi support (kaldi may be necessary for certian preprocessing steps in espnet2).
 
+---
 <h4>Installing ESPnet</h4>
 All steps can be found <a href='https://espnet.github.io/espnet/installation.html'>here</a>, I will be going key steps.
 
@@ -59,6 +60,7 @@ You will also have it's corresponding transcripts. It can be present in a text f
  ```
 In the text file, the utterence ids are present along with the text next to it. This is how data is present for mucs subtask1, I will walk through the data preparation steps involved with it.
 
+---
 <h4>Subtask1 ESPnet recipe</h4>
 Subtask1 involves building a multilingual ASR system in six languages, namely, Hindi, Marathi, Odia, Telugu, Tamil, and Gujarati. 3 languages- Hindi, Marathi, Odia are available at a publicly accesible download link, so let us have a script to download it for us.
 
@@ -289,8 +291,47 @@ These files are now arranged in the following structure,
 <h4>End-to-end integration for subtask1</h4>
 With this, data preparation is complete. How do the different files interact with each other?
 
+We create the recipe directory at ```egs/<recipe-name>/asr1/```.
 We store ```download_data.sh``` & ```prepare_data.sh``` in ```local/```.
-Then it is handled in initial stages in ```run.sh```. We first download the data with ```download_data.sh``` in stage -1.
+
+The codes will be present as follows,
+```
+-egs/
+    -<recipe-name>/
+        -asr1/
+            -local/
+                -download_data.sh*
+                -prepare_data.sh*
+                -down_sample.sh*
+                -test_data_prep.sh*
+                -train_data_prep.sh*
+            -config/
+                -transformer.yaml*
+                -lm.yaml*
+                -pitch.conf*
+                -fbank.yaml*
+                -decode.yaml*
+                -queue.conf
+                -slurm.conf
+                -gpu.conf
+                -fbank.yaml
+
+            -steps/
+            -utils/
+            -run.sh*
+            -cmd.sh
+            -path.sh
+
+*files to change          
+```
+Adding symbolic links,
+```
+ln -s ../../../tools/kaldi/egs/wsj/s5/utils utils
+ln -s ../../../tools/kaldi/egs/wsj/s5/steps steps
+```
+
+Then it is handled in initial stages in ```run.sh```.
+We first download the data with ```download_data.sh``` in stage -1.
 
 ```
 if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
@@ -316,7 +357,7 @@ fi
 ```
 Here, test_data_prep.sh & train_data_prep.sh generate the kaldi style data.
 
-After this, you can proceed with other stages starting with feature generation. We use fbank with pitch as audio features. After this is computed, it need not be visited again to change the model or fine tune results. So we can start from stage 2.
+After this, you can proceed with other stages starting with feature generation. We use fbank with pitch as audio features. After this is computed, it need not be visited again to change the model or fine tune results. So we can skip using stage arguement.
 
 Experiment reuslts & logs are stored in `exp/` folder. Model configuration file can be added in ```conf/```, new experiment directories will be created inside `exp/` with the config file name present.
 
@@ -340,6 +381,7 @@ mv $3 $1
 
 Once this is performed, the data is ready to be used by feature generation. The same steps are followed as before.
 
+---
 <h4>ESPnet2 recipes</h4>
 Now that our espnet codes are ready to train ASR models, how can we transition to ESPnet2? It involved minimal steps. Here are the main design differences,
 
@@ -349,6 +391,55 @@ Now that our espnet codes are ready to train ASR models, how can we transition t
 - All steps involving data download and preparation from ```run.sh``` is now present in ```local/data.sh```.
 
 <h4>ESPnet2 recipe subtask1</h4>
+
+The dreictory structure will be,
+```
+-egs2/
+    -<recipe-name>/
+        -asr1/
+            -local/
+                -download_data.sh
+                -prepare_data.sh
+                -down_sample.sh
+                -test_data_prep.sh
+                -train_data_prep.sh
+                -data.sh*
+            -config/
+                -transformer.yaml*
+                -lm.yaml*
+                -pitch.conf*
+                -fbank.yaml*
+                -decode.yaml*
+                -queue.conf
+                -slurm.conf
+                -gpu.conf
+                -fbank.yaml
+
+            -steps/
+            -utils/
+            -run.sh*
+            -cmd.sh
+            -path.sh
+            -db.sh
+            -path.sh
+            -pyscripts/
+            -scripts/
+            -steps/
+            -utils/
+
+*files to change          
+```
+Adding symbolic links,
+```
+ln -s ../../../tools/kaldi/egs/wsj/s5/utils utils
+ln -s ../../../tools/kaldi/egs/wsj/s5/steps steps
+ln -s ../../TEMPLATE/asr1/scripts scripts
+ln -s ../../TEMPLATE/asr1/pyscripts pyscripts
+ln ../../TEMPLATE/asr1/path.sh path.sh
+ln ../../TEMPLATE/asr1/db.sh db.sh
+ln ../../TEMPLATE/asr1/db.sh asr.sh
+```
+
 Here, data.sh becomes,
 
 ```
@@ -421,8 +512,8 @@ lm_config_=conf/lm.yaml
     --asr_config "${asr_config}" \
     --train_set "${train_set}" \
     --valid_set "${valid_set}" \
-    --test_sets "${test_set}" "$@"
+    --test_sets "${test_set}" "$@"  
 
 ```
-
-#Somthing to conclude
+---
+This is a tutorial to create recipe for MUCS subtasks with espnet1 & espnet2. This is by no means exhaustive, it highlights the structure of the code base, the different parts to be taken into consideration to train with espnet. There are 50+ recipes in espnet1 & 2 so before starting your recipe, take a lot of other recipes similar to your problem statement/ dataset.
