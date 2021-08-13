@@ -537,4 +537,11 @@ lm_config_=conf/lm.yaml
 
 ```
 ---
-This is a tutorial to create recipe for MUCS subtasks with espnet1 & espnet2. This is by no means exhaustive, it highlights the structure of the code base, the different parts to be taken into consideration to train with espnet. There are 50+ recipes in espnet1 & 2 so before starting your recipe, take a lot of other recipes similar to your problem statement/ dataset.
+This is a tutorial to create recipe for MUCS subtasks with espnet1 & espnet2. This is by no means exhaustive, it highlights the structure of the code base, the different parts to be taken into consideration to train with espnet. There are 50+ recipes in espnet1 & 2 so before starting your recipe, take a lot of other recipes similar to your problem statement/ dataset. Some links with instructions are provided below
+- espnet recipe building doc: https://github.com/espnet/espnet/blob/master/CONTRIBUTING.md#13-recipes
+-espnet install: https://espnet.github.io/espnet/installation.html
+- kaldi download: https://kaldi-asr.org/doc/install.html
+- kaldi data preperatoin: http://kaldi-asr.org/doc/data_prep.html
+- espnet recipes: https://github.com/espnet/espnet/tree/master/egs
+- espnet2 recipes: https://github.com/espnet/espnet/tree/master/egs2
+- transition code to espnet2: https://espnet.github.io/espnet/espnet2_tutorial.html
